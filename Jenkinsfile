@@ -1,3 +1,4 @@
+// Jenkinsfile
 pipeline {
     agent any
 
@@ -8,20 +9,22 @@ pipeline {
             }
         }
 
-        stage('Setup Node.js') {
+        stage('Setup Node.js & Install Bruno CLI') {
             steps {
                 tool 'Node.js 18'
-            }
-        }
 
-        stage('Install Bruno CLI') {
-            steps {
-                sh 'npm install -g @usebruno/cli'
+                withNode() {
+                    sh 'node -v'
+                    sh 'npm -v'
+                    sh 'npm install -g @usebruno/cli'
+                    sh 'bru --version'
+                }
             }
         }
 
         stage('Run API Tests') {
             steps {
+               
                 sh 'bru run --env ci --reporter-html results.html'
             }
         }
